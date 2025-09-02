@@ -5,13 +5,14 @@ import Button from "../Button";
 import styles from "./ToastPlayground.module.css";
 
 import { VARIANT_OPTIONS } from "../Toast";
+import { ToastContext } from "../ToastProvider";
 import ToastShelf from "../ToastShelf";
 
 function ToastPlayground() {
   const defaultVariant = VARIANT_OPTIONS[0];
   const [message, setMessage] = React.useState("");
   const [variant, setVariant] = React.useState(defaultVariant);
-  const [toasts, setToasts] = React.useState([]);
+  const { addToast } = React.useContext(ToastContext);
 
   function handleMessageChange(e) {
     setMessage(e.target.value);
@@ -23,23 +24,9 @@ function ToastPlayground() {
 
   function handleFormSubmit(e) {
     e.preventDefault();
-    handleAddToast({ variant, message });
-  }
-
-  function handleAddToast({ variant, message }) {
-    if (message == null || message === "") return;
-
-    setToasts((currToasts) => [
-      ...currToasts,
-      { variant, message, id: crypto.randomUUID() },
-    ]);
+    addToast({ variant, message });
     setMessage("");
     setVariant(defaultVariant);
-  }
-
-  function removeToast(id) {
-    const newToasts = toasts.filter((t) => t.id !== id);
-    setToasts(newToasts);
   }
 
   return (
@@ -95,7 +82,7 @@ function ToastPlayground() {
             </div>
           </div>
 
-          <ToastShelf toasts={toasts} onClose={removeToast} />
+          <ToastShelf />
         </div>
       </form>
     </div>
